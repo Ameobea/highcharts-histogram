@@ -28,16 +28,35 @@
     var binLow = bins[0];
     var binHigh = bins[binCount];
 
-    var binData = new Array(binCount);
-    for (var bin=0; bin<binCount; bin++) {
-      binData[bin] = 0;
+    // If data contains only one value, manually create bins since
+    // bin generation code breaks
+    var same = true;
+    var last = data[0];
+    for(var i=0;i<data.length;i++){
+      if(data[i] != last){
+        same = false;
+        break;
+      }else{
+        last = data[i];
+      }
     }
+    if(same){
+      binCount = 1;
+      binHigh = binLow = data[0];
+      binData = [data.length];
+      binWidth = 0;
+    }else{
+      var binData = new Array(binCount);
+      for (var bin=0; bin<binCount; bin++) {
+        binData[bin] = 0;
+      }
 
-    var a = binCount / (binHigh - binLow);
-    var b = binLow * binCount / (binHigh - binLow);
-    for (var i=0; i<n; i++) {
-      var bin = Math.min(Math.floor( a * data[i] - b ), binCount-1);
-      binData[bin]++;
+      var a = binCount / (binHigh - binLow);
+      var b = binLow * binCount / (binHigh - binLow);
+      for (var i=0; i<n; i++) {
+        var bin = Math.min(Math.floor( a * data[i] - b ), binCount-1);
+        binData[bin]++;
+      }
     }
 
     var options = H.merge(
